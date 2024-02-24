@@ -1,6 +1,6 @@
 import unittest
 
-from layered_attributes import LayeredEffectDefinition, AttributeKey, EffectOperation
+from layered_attributes import LayeredEffectDefinition, AttributeKey, EffectOperation, LayeredAttributes
 from layered_attributes_impl import LayeredAttributesImpl
 
 
@@ -15,6 +15,9 @@ class TestLayerImpl(unittest.TestCase):
                                                   Modification=4, Layer=0)
     mana_sub_8_layer_3 = LayeredEffectDefinition(Attribute=AttributeKey.ManaValue, Operation=EffectOperation.Subtract,
                                                  Modification=8, Layer=3)
+
+    def test_interface_implementation(self):
+        self.assertTrue(issubclass(LayeredAttributesImpl, LayeredAttributes))
 
     def test_base_state(self):
         impl = LayeredAttributesImpl()
