@@ -30,6 +30,7 @@ class TestLayer(unittest.TestCase):
         self.assertEqual(2, layer.size())
         self.assertEqual(self.sub3_layer7, layer.effects[0])
         self.assertEqual(self.add5_layer10, layer.effects[1])
+        self.assertEqual(2, layer.get_value())
 
     def test_add_effects_different_layers(self):
         layer = Layer("power")
@@ -52,30 +53,6 @@ class TestLayer(unittest.TestCase):
         self.assertEqual(self.add1_layer15, layer.effects[6])
         self.assertEqual(45, layer.get_value())
 
-    def test_adding_set_operation_optimization(self):
-        layer = Layer("power")
-        layer.add_effect(effect=self.add5_layer10)
-        layer.add_effect(effect=self.and44_layer5)
-        layer.add_effect(effect=self.sub3_layer7)
-        layer.add_effect(effect=self.mul6_layer4)
-        layer.add_effect(effect=self.add2_layer5)
-        layer.add_effect(effect=self.mul3_layer5)
-        layer.add_effect(effect=self.add1_layer15)
-        self.assertEqual(7, layer.size())
-
-        # Adds a set operation to the end, this should remove all effects before it
-        layer.add_effect(self.set5_layer13)
-        self.assertEqual(2, layer.size())
-        self.assertEqual(self.set5_layer13, layer.effects[0])
-        self.assertEqual(self.add1_layer15, layer.effects[1])
-
-        # Effects[0] is now a Set operation. When we try to add effects in a lower layer it shouldn't add anything since it will be immediately overridden by the set.
-        layer.add_effect(self.set5_layer13)
-        layer.add_effect(self.set5_layer13)
-        self.assertEqual(2, layer.size())
-        self.assertEqual(self.set5_layer13, layer.effects[0])
-        self.assertEqual(self.add1_layer15, layer.effects[1])
-
     def test_set_base(self):
         layer = Layer("power")
         layer.set_base(3)
@@ -93,14 +70,17 @@ class TestLayer(unittest.TestCase):
 
     def test_clear(self):
         layer = Layer("power")
+        layer.set_base(5)
         layer.add_effect(effect=self.add5_layer10)
         layer.add_effect(effect=self.add5_layer10)
         layer.add_effect(effect=self.add5_layer10)
         layer.add_effect(effect=self.add5_layer10)
 
         self.assertEqual(4, layer.size())
+        self.assertEqual(25, layer.get_value())
         layer.clear()
         self.assertEqual(0, layer.size())
+        self.assertEqual(5, layer.get_value())
 
 
 if __name__ == '__main__':

@@ -2,25 +2,37 @@ from layered_attributes import LayeredEffectDefinition, EffectOperation
 
 
 class Layer:
-    effects = []
 
     def __init__(self, attribute: str):
         self.base_value = 0
         self.effects = []
         self.attribute = attribute
-
-    """
-    Sets the base value for the layer.
-    """
+        self.cached_value = self.base_value
 
     def set_base(self, new_base: int) -> None:
-        self.base_value = new_base
+        """
+        Sets the base value for the layer.
 
-    """
-    Iterates over the layer and computes all effects into a single value.
-    """
+        Args:
+            new_base: new base value for this layer
+        """
+        self.base_value = new_base
+        self.cached_value = self.recalculate_value()
 
     def get_value(self) -> int:
+        """
+        Returns the pre-computed cache value for this layer.
+        """
+        return self.cached_value
+
+    def recalculate_value(self) -> int:
+        """
+        Iterates over all effects and computes their value. This function is called every time a new effect is added or
+        the base value changes to save on compute time.
+
+        Returns:
+            computed values of all effects in this layer
+        """
         value = self.base_value
 
         val: LayeredEffectDefinition
@@ -42,22 +54,15 @@ class Layer:
 
         return value
 
-    """
-    Adds an effect to the correct spot within the layer. This is done by iterating over the current effects and slotting
-    the new effect in the appropriate sorted position
-    """
-
     def add_effect(self, effect: LayeredEffectDefinition) -> None:
-        if effect.Operation == EffectOperation.Set:
-            self.add_effect_set(effect)
-        else:
-            self.add_effect_notset(effect)
+        """
+        Adds an effect to this layer. Later functions will iterate over the effects list until it finds the proper position
+        for the effect to be placed in. After adding the effect we will recompute the value of all the layers and save the
+        cached value
 
-    def add_effect_notset(self, effect: LayeredEffectDefinition) -> None:
-        # Since a set operation overrides all effects before it there's no point in adding an effect before it
-        if len(self.effects) > 0 and self.effects[0].Operation == EffectOperation.Set and self.effects[0].Layer > effect.Layer:
-            return
-
+        Args:
+            effect: the effect to be added
+        """
         spot = -1
         for i in range(len(self.effects)):
             if self.effects[i].Layer > effect.Layer:
@@ -68,37 +73,25 @@ class Layer:
             self.effects.append(effect)
         else:
             self.effects.insert(spot, effect)
-
-    def add_effect_set(self, effect: LayeredEffectDefinition) -> None:
-        if effect.Operation != EffectOperation.Set:
-            return # consider throwing an exception here since this should never happen.
-        while len(self.effects) > 0:
-            if self.effects[0].Layer > effect.Layer:
-                self.effects.insert(0, effect)
-                return
-            else:
-                self.effects.pop(0)
-        self.effects.append(effect)
-
-    """
-    Clears all effects from the layer. Base value stays the same.
-    """
+        self.cached_value = self.recalculate_value()
 
     def clear(self) -> None:
+        """
+        Clears all effects from the layer. Assumption is that the base value stays the same.
+        """
         self.effects.clear()
+        self.cached_value = self.base_value
 
-    """
-    Returns the number of effects in this layer.
-    """
-
-    def size(self):
+    def size(self) -> int:
+        """
+        Returns the number of effects in this layer. Used for testing currently but might be useful later.
+        """
         return len(self.effects)
 
-    """
-    to string, return none if layer is empty.
-    """
-
     def to_string(self) -> str:
+        """
+        to string, used for the console interaction.
+        """
         to_string = ""
 
         definition: LayeredEffectDefinition

@@ -11,8 +11,8 @@ class LayeredAttributesImpl(LayeredAttributes):
             self.attributes[key] = Layer(key.name)
 
     def set_base_attribute(self, attribute: AttributeKey, value: int) -> None:
-        attribute[AttributeKey].base_value = value
-        return
+        if attribute in self.attributes:
+            self.attributes[attribute].set_base(value)
 
     def get_current_attribute(self, attribute: AttributeKey) -> int:
         if attribute in self.attributes:
