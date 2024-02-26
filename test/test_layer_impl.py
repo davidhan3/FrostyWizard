@@ -23,6 +23,8 @@ class TestLayerImpl(unittest.TestCase):
         impl = LayeredAttributesImpl()
 
         for key in AttributeKey:
+            self.assertEqual(0, impl.attributes[key].base_value)
+            self.assertEqual(0, impl.attributes[key].size())
             self.assertEqual(0, impl.get_current_attribute(key))
 
     def test_set_base(self):

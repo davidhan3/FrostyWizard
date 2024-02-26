@@ -32,7 +32,5 @@ class LayeredAttributesImpl(LayeredAttributes):
 
     def print(self):
         for key in self.attributes:
-            name = key
-            to_string = self.attributes[key].to_string()
-            print("{}: {}".format(name, to_string))
+            print(self.attributes[key].to_string())
         print("")

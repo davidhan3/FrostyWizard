@@ -92,10 +92,10 @@ class Layer:
         """
         to string, used for the console interaction.
         """
-        to_string = ""
+        to_string = "{}: base=[{}] effects: ".format(self.attribute, self.base_value)
 
         definition: LayeredEffectDefinition
         for effect in self.effects:
-            to_string += "[Op={}, Mod={}, Layer={}] ".format(effect.Operation, effect.Modification, effect.Layer)
+            to_string += "[Op={}, Mod={}, Layer={}] ".format(effect.Operation.name, effect.Modification, effect.Layer)
 
         return None if to_string == "" else to_string
