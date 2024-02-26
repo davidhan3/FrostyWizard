@@ -21,6 +21,8 @@ class TestLayer(unittest.TestCase):
                                            Layer=15)
     set5_layer13 = LayeredEffectDefinition(Attribute=AttributeKey.Power, Operation=EffectOperation.Set, Modification=5,
                                            Layer=13)
+    invalid77_layer6 = LayeredEffectDefinition(Attribute=AttributeKey.Power, Operation=EffectOperation.Invalid,
+                                               Modification=77, Layer=6)
 
     def test_add_effects_simple(self):
         layer = Layer("power")
@@ -52,6 +54,18 @@ class TestLayer(unittest.TestCase):
         self.assertEqual(self.add5_layer10, layer.effects[5])
         self.assertEqual(self.add1_layer15, layer.effects[6])
         self.assertEqual(45, layer.get_value())
+
+    def test_invalid_operation(self):
+        layer = Layer("power")
+        layer.add_effect(effect=self.sub3_layer7)
+        layer.add_effect(effect=self.add5_layer10)
+        layer.add_effect(effect=self.invalid77_layer6)
+
+        self.assertEqual(3, layer.size())
+        self.assertEqual(self.invalid77_layer6, layer.effects[0])
+        self.assertEqual(self.sub3_layer7, layer.effects[1])
+        self.assertEqual(self.add5_layer10, layer.effects[2])
+        self.assertEqual(2, layer.get_value())
 
     def test_set_base(self):
         layer = Layer("power")
