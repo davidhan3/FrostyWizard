@@ -35,22 +35,22 @@ class Layer:
         """
         value = self.base_value
 
-        val: LayeredEffectDefinition
-        for val in self.effects:
-            if val.Operation == EffectOperation.Set:
-                value = val.Modification
-            elif val.Operation == EffectOperation.Add:
-                value += val.Modification
-            elif val.Operation == EffectOperation.Subtract:
-                value -= val.Modification
-            elif val.Operation == EffectOperation.Multiply:
-                value *= val.Modification
-            elif val.Operation == EffectOperation.BitwiseAnd:
-                value &= val.Modification
-            elif val.Operation == EffectOperation.BitwiseOr:
-                value |= val.Modification
-            elif val.Operation == EffectOperation.BitwiseXor:
-                value ^= val.Modification
+        effect: LayeredEffectDefinition
+        for effect in self.effects:
+            if effect.Operation == EffectOperation.Set:
+                value = effect.Modification
+            elif effect.Operation == EffectOperation.Add:
+                value += effect.Modification
+            elif effect.Operation == EffectOperation.Subtract:
+                value -= effect.Modification
+            elif effect.Operation == EffectOperation.Multiply:
+                value *= effect.Modification
+            elif effect.Operation == EffectOperation.BitwiseAnd:
+                value &= effect.Modification
+            elif effect.Operation == EffectOperation.BitwiseOr:
+                value |= effect.Modification
+            elif effect.Operation == EffectOperation.BitwiseXor:
+                value ^= effect.Modification
 
         return value
 
